@@ -1,0 +1,2581 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لعبة التدفق المالي - النسخة العربية المتطورة</title>
+    <style>
+       /* أنماط CSS الأساسية هنا */
+        :root {
+            --primary: #2c5aa0;
+            --secondary: #d4af37;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --info: #17a2b8;
+            --light: #f8f9fa;
+            --dark: #343a40;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), #1e3d6f);
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .game-area {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 20px;
+        }
+        
+        .board-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(11, 1fr);
+            grid-template-rows: repeat(11, 1fr);
+            gap: 5px;
+            height: 650px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            padding: 10px;
+            position: relative;
+        }
+        
+        .board-cell {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 0.75rem;
+            padding: 5px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .board-cell:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .rat-race {
+            grid-column: 2 / 11;
+            grid-row: 2 / 11;
+            background-color: #e3f2fd;
+            border: 2px dashed var(--primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            z-index: 1;
+        }
+        
+        .fast-track {
+            grid-column: 1 / 12;
+            grid-row: 1 / 12;
+            background-color: #fff8e1;
+            border: 2px dashed var(--secondary);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            z-index: 0;
+        }
+        
+        .player-info {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-height: 800px;
+            overflow-y: auto;
+        }
+        
+        .players-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .player-card {
+            padding: 15px;
+            border-radius: 8px;
+            background-color: var(--light);
+            border-left: 4px solid var(--primary);
+        }
+        
+        .current-player {
+            border-left: 4px solid var(--secondary);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+        
+        .player-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--primary);
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .player-profession {
+            font-size: 0.9rem;
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+        
+        .financial-statement {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        
+        .financial-statement h3 {
+            text-align: center;
+            margin-bottom: 15px;
+            color: var(--primary);
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        .income, .expenses {
+            margin-bottom: 15px;
+        }
+        
+        .cash-flow {
+            font-weight: bold;
+            font-size: 1.1rem;
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        
+        .positive {
+            background-color: #e8f5e9;
+            color: var(--success);
+        }
+        
+        .negative {
+            background-color: #ffebee;
+            color: var(--danger);
+        }
+        
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        button {
+            padding: 12px 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: var(--primary);
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #1e3d6f;
+        }
+        
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .card-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+            width: 500px;
+            max-width: 90%;
+        }
+        
+        .card-header {
+            background-color: var(--primary);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px 5px 0 0;
+            margin: -20px -20px 15px -20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .card-content {
+            margin-bottom: 15px;
+        }
+        
+        .card-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 99;
+        }
+        
+        .opportunity {
+            background-color: #e8f5e9;
+        }
+        
+        .market {
+            background-color: #e3f2fd;
+        }
+        
+        .life {
+            background-color: #fff8e1;
+        }
+        
+        .salary {
+            background-color: #f3e5f5;
+        }
+        
+        .property {
+            background-color: #ffebee;
+        }
+        
+        .player-marker {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            z-index: 2;
+            box-shadow: 0 0 3px rgba(0,0,0,0.5);
+        }
+        
+        .property-owned {
+            border: 2px solid gold;
+        }
+        
+        .setup-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+        }
+        
+        .setup-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 600px;
+            max-width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .profession-option {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .profession-option:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .profession-option.selected {
+            border-color: var(--primary);
+            background-color: #e3f2fd;
+        }
+        
+        .profession-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        
+        .profession-details {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .player-setup {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .player-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-left: 10px;
+        }
+        
+        .game-log {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 10px;
+            height: 150px;
+            overflow-y: auto;
+            font-size: 0.9rem;
+        }
+        
+        .log-entry {
+            margin-bottom: 5px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .win-condition {
+            background-color: #e8f5e9;
+            border: 1px solid #28a745;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 10px;
+            text-align: center;
+        }
+        
+        .fast-track-player {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(212, 175, 55, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+        }
+        
+        .bankruptcy {
+            background-color: #ffebee;
+            border: 1px solid #dc3545;
+            border-radius: 5px;
+            padding: 10px;
+            text-align: center;
+            margin-top: 10px;
+        }
+        
+        .fast-track-cell {
+            background-color: #fff3cd;
+            border: 2px solid var(--secondary);
+        }
+        
+        /* أنماط الإنجازات */
+        .achievement-popup {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 1000;
+            animation: slideDown 0.5s ease-out;
+        }
+
+        .achievement-content {
+            text-align: center;
+        }
+
+        .achievement-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .achievement-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .achievement-desc {
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .achievement-reward {
+            font-weight: bold;
+            color: gold;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translate(-50%, -100%);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, 0);
+                opacity: 1;
+            }
+        }
+
+        /* أنماط التحليلات */
+        .analytics-panel {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .analytics-panel h4 {
+            margin-bottom: 10px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+            padding-bottom: 5px;
+        }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .analytics-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+        }
+
+        .analytics-item span:last-child {
+            font-weight: bold;
+        }
+
+        .setup-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .game-area {
+                grid-template-columns: 1fr;
+            }
+            
+            .game-board {
+                height: 500px;
+            }
+            
+            .players-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .setup-controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>لعبة التدفق المالي</h1>
+            <p class="subtitle">تعلم أساسيات الإدارة المالية والاستثمار في بيئة عربية</p>
+        </header>
+        
+        <div class="game-area">
+            <div class="board-container">
+                <div class="game-board">
+                    <div class="fast-track">المسار السريع - طريق الثراء</div>
+                    <div class="rat-race">سباق الجري - الحياة الاعتيادية</div>
+                    
+                    <!-- مسار سباق الجري -->
+                    <div class="board-cell salary" data-cell-type="salary" data-cell-id="0">مرتب<br>+2000</div>
+                    <div class="board-cell opportunity" data-cell-type="opportunity" data-cell-id="1">فرصة استثمارية</div>
+                    <div class="board-cell market" data-cell-type="market" data-cell-id="2">سوق</div>
+                    <div class="board-cell life" data-cell-type="life" data-cell-id="3">دورة الحياة</div>
+                    <div class="board-cell property" data-cell-type="property" data-cell-id="4" data-price="50000" data-rent="1000">عقار سكني</div>
+                    <div class="board-cell opportunity" data-cell-type="opportunity" data-cell-id="5">فرصة استثمارية</div>
+                    <div class="board-cell market" data-cell-type="market" data-cell-id="6">سوق</div>
+                    <div class="board-cell life" data-cell-type="life" data-cell-id="7">دورة الحياة</div>
+                    <div class="board-cell salary" data-cell-type="salary" data-cell-id="8">مرتب<br>+2000</div>
+                    
+                    <div class="board-cell life" data-cell-type="life" data-cell-id="9">دورة الحياة</div>
+                    <div class="board-cell property" data-cell-type="property" data-cell-id="10" data-price="80000" data-rent="1500">عقار تجاري</div>
+                    <div class="board-cell market" data-cell-type="market" data-cell-id="11">سوق</div>
+                    <div class="board-cell opportunity" data-cell-type="opportunity" data-cell-id="12">فرصة استثمارية</div>
+                    <div class="board-cell salary" data-cell-type="salary" data-cell-id="13">مرتب<br>+2000</div>
+                    <div class="board-cell life" data-cell-type="life" data-cell-id="14">دورة الحياة</div>
+                    <div class="board-cell property" data-cell-type="property" data-cell-id="15" data-price="120000" data-rent="2000">مجمع سكني</div>
+                    <div class="board-cell market" data-cell-type="market" data-cell-id="16">سوق</div>
+                    <div class="board-cell opportunity" data-cell-type="opportunity" data-cell-id="17">فرصة استثمارية</div>
+                    
+                    <div class="board-cell opportunity" data-cell-type="opportunity" data-cell-id="18">فرصة استثمارية</div>
+                    <div class="board-cell property" data-cell-type="property" data-cell-id="19" data-price="100000" data-rent="1800">عقار فاخر</div>
+                    <div class="board-cell market" data-cell-type="market" data-cell-id="20">سوق</div>
+                    <div class="board-cell life" data-cell-type="life" data-cell-id="21">دورة الحياة</div>
+                    <div class="board-cell salary" data-cell-type="salary" data-cell-id="22">مرتب<br>+2000</div>
+                    <div class="board-cell opportunity" data-cell-type="opportunity" data-cell-id="23">فرصة استثمارية</div>
+                    <div class="board-cell market" data-cell-type="market" data-cell-id="24">سوق</div>
+                    <div class="board-cell life" data-cell-type="life" data-cell-id="25">دورة الحياة</div>
+                    
+                    <div class="board-cell life" data-cell-type="life" data-cell-id="26">دورة الحياة</div>
+                    <div class="board-cell market" data-cell-type="market" data-cell-id="27">سوق</div>
+                    <div class="board-cell property" data-cell-type="property" data-cell-id="28" data-price="60000" data-rent="1200">عقار استثماري</div>
+                    <div class="board-cell opportunity" data-cell-type="opportunity" data-cell-id="29">فرصة استثمارية</div>
+                    <div class="board-cell salary" data-cell-type="salary" data-cell-id="30">مرتب<br>+2000</div>
+                    <div class="board-cell life" data-cell-type="life" data-cell-id="31">دورة الحياة</div>
+                    <div class="board-cell market" data-cell-type="market" data-cell-id="32">سوق</div>
+                    <div class="board-cell property" data-cell-type="property" data-cell-id="33" data-price="150000" data-rent="2500">برج سكني</div>
+
+                    <!-- خلايا المسار السريع -->
+                    <div class="board-cell fast-track-cell" data-cell-type="fast-track" data-cell-id="34">استثمار ضخم</div>
+                    <div class="board-cell fast-track-cell" data-cell-type="fast-track" data-cell-id="35">صفقة عالمية</div>
+                    <div class="board-cell fast-track-cell" data-cell-type="fast-track" data-cell-id="36">مشروع قومي</div>
+                </div>
+            </div>
+            
+            <div class="player-info">
+                <div class="players-container" id="playersContainer">
+                    <!-- سيتم تعبئة اللاعبين ديناميكياً -->
+                </div>
+                
+                <div class="financial-statement" id="currentPlayerStatement">
+                    <!-- سيتم تعبئة البيانات المالية للاعب الحالي -->
+                </div>
+                
+                <div class="win-condition" id="winCondition">
+                    <h4>شرط الفوز:</h4>
+                    <p>للفوز بالمرحلة الاعتيادية والانتقال إلى المسار السريع، يجب أن يصبح تدفقك النقدي السلبي إيجابياً!</p>
+                    <p id="playerGoal">هدفك: تدفق نقدي إيجابي</p>
+                </div>
+                
+                <div class="game-log">
+                    <h4>سجل الأحداث</h4>
+                    <div id="gameLog">
+                        <!-- سيتم إضافة الأحداث هنا -->
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <button id="rollDice">رمي النرد</button>
+                    <button id="buyProperty" disabled>شراء العقار</button>
+                    <button id="endTurn">إنهاء الدور</button>
+                    <button id="saveGame">حفظ اللعبة</button>
+                    <button id="showAnalytics">عرض التحليلات</button>
+                    <button id="newGame">لعبة جديدة</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- النوافذ المنبثقة -->
+    <div class="overlay" id="overlay"></div>
+    
+    <div class="card-popup" id="cardPopup">
+        <div class="card-header">
+            <span id="cardHeader">فرصة استثمارية</span>
+            <span id="cardCost"></span>
+        </div>
+        <div class="card-content" id="cardContent">
+            <!-- سيتم تعبئة محتوى البطاقة هنا -->
+        </div>
+        <div class="card-actions">
+            <button id="acceptCard">موافق</button>
+            <button id="rejectCard">رفض</button>
+        </div>
+    </div>
+
+    <div class="setup-screen" id="setupScreen">
+        <div class="setup-container">
+            <h2>إعداد اللعبة</h2>
+            <p>اختر عدد اللاعبين واختر المهن المناسبة لكل لاعب:</p>
+            
+            <div id="playersSetup">
+                <!-- سيتم تعبئة إعداد اللاعبين هنا -->
+            </div>
+            
+            <div class="setup-controls">
+                <button id="startGame">بدء اللعبة</button>
+                <button id="loadGame">تحميل لعبة سابقة</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // === البيانات الأساسية ===
+        // بيانات المهن
+        const professions = [
+            {
+                id: 1,
+                name: "موظف",
+                salary: 4000,
+                expenses: 3500,
+                savings: 10000,
+                description: "وظيفة مستقرة براتب ثابت ولكن محدودية في فرص النمو",
+                risk: "منخفض",
+                color: "#3498db",
+                passiveIncomeGoal: 8000
+            },
+            {
+                id: 2,
+                name: "رجل أعمال",
+                salary: 10000,
+                expenses: 7500,
+                savings: 45000,
+                description: "دخل مرتفع ولكن مع مخاطر متوسطة وتقلبات في السوق",
+                risk: "متوسط",
+                color: "#e74c3c",
+                passiveIncomeGoal: 40000
+            },
+            {
+                id: 3,
+                name: "رائد أعمال",
+                salary: 3000,
+                expenses: 2800,
+                savings: 10000,
+                description: "دخل منخفض في البداية مع إمكانية نمو كبير ومخاطر عالية",
+                risk: "مرتفع",
+                color: "#9b59b6",
+                passiveIncomeGoal: 15000
+            },
+            {
+                id: 4,
+                name: "مالك عقار",
+                salary: 8000,
+                expenses: 5500,
+                savings: 50000,
+                description: "دخل معتدل مع أصول عقارية ولكن مع مسؤوليات صيانة وإدارة",
+                risk: "منخفض-متوسط",
+                color: "#f39c12",
+                passiveIncomeGoal: 40000
+            },
+            {
+                id: 5,
+                name: "عاطل عن العمل",
+                salary: 500,
+                expenses: 1000,
+                savings: 2500,
+                description: "دخل منخفض جداً مع فرص محدودة ولكن إمكانية الحصول على مساعدات",
+                risk: "مرتفع جداً",
+                color: "#95a5a6",
+                passiveIncomeGoal: 4500
+            },
+            {
+                id: 6,
+                name: "مستثمر",
+                salary: 7500,
+                expenses: 6500,
+                savings: 50000,
+                description: "دخل مرتفع مع محفظة استثمارية متنوعة ولكن معرض لتقلبات السوق",
+                risk: "متوسط-مرتفع",
+                color: "#1abc9c",
+                passiveIncomeGoal: 15000
+            }
+        ];
+
+          // بيانات البطاقات - فرص استثمارية إضافية
+const opportunities = [
+    {
+        type: "فرصة استثمارية",
+        title: "شقة سكنية للإيجار",
+        description: "عرض لشراء شقة سكنية في موقع ممتاز وتأجيرها لتحقيق دخل شهري ثابت",
+        cost: 100000,
+        downPayment: 20000,
+        loan: {
+            amount: 80000,
+            interestRate: 5, // نسبة الفائدة السنوية %
+            termYears: 10,   // مدة القرض بالسنوات
+            monthlyPayment: 600,
+            totalInterest: 16000
+        },
+        cashFlow: 300,
+        details: [
+            "سعر الشراء: 100,000 ريال",
+            "دفعة أولى: 20,000 ريال",
+            "قرض بنكي: 80,000 ريال لمدة 10 سنوات بفائدة 5%",
+            "القسط الشهري: 600 ريال",
+            "دخل إيجاري شهري: 900 ريال",
+            "التدفق النقدي الشهري: +300 ريال",
+            "إجمالي الفائدة المدفوعة خلال فترة القرض: 16,000 ريال"
+        ]
+    },
+    {
+        type: "فرصة استثمارية",
+        title: "محل تجاري",
+        description: "استثمار في محل تجاري في موقع حيوي بعائد إيجاري مرتفع",
+        cost: 150000,
+        downPayment: 30000,
+        loan: {
+            amount: 120000,
+            interestRate: 6,
+            termYears: 8,
+            monthlyPayment: 1200,
+            totalInterest: 24000
+        },
+        cashFlow: 800,
+        details: [
+            "سعر الشراء: 150,000 ريال",
+            "دفعة أولى: 30,000 ريال",
+            "قرض بنكي: 120,000 ريال لمدة 8 سنوات بفائدة 6%",
+            "القسط الشهري: 1,200 ريال",
+            "دخل إيجاري شهري: 2,000 ريال",
+            "التدفق النقدي الشهري: +800 ريال",
+            "إجمالي الفائدة المدفوعة: 24,000 ريال"
+        ]
+    },
+    {
+        type: "فرصة استثمارية",
+        title: "استثمار في أسهم",
+        description: "فرصة للاستثمار في أسهم شركة تقنية واعدة تحقق أرباحاً دورية ونمواً جيداً على المدى الطويل.",
+        cost: 5000,
+        downPayment: 0,
+        cashFlow: 200,
+        details: [
+            "قيمة الاستثمار: 5,000 ريال",
+            "توزيعات أرباح شهرية تقديرية: 200 ريال",
+            "العائد السنوي المتوقع: 6%",
+            "إمكانية نمو رأس المال بنسبة 10% سنوياً",
+            "الاستثمار لا يتطلب تمويلاً أو قروضاً"
+        ]
+    },
+    {
+        type: "فرصة استثمارية",
+        title: "مشروع ناشئ",
+        description: "استثمار في مشروع ناشئ بمجال التقنية مع إمكانية نمو عالية",
+        cost: 50000,
+        downPayment: 15000,
+        loan: {
+            amount: 35000,
+            interestRate: 7,
+            termYears: 5,
+            monthlyPayment: 700,
+            totalInterest: 7500
+        },
+        cashFlow: 500,
+        details: [
+            "قيمة الاستثمار: 50,000 ريال",
+            "دفعة أولى: 15,000 ريال",
+            "قرض تمويلي: 35,000 ريال لمدة 5 سنوات بفائدة 7%",
+            "القسط الشهري: 700 ريال",
+            "دخل شهري متوقع: 1,200 ريال",
+            "التدفق النقدي الشهري: +500 ريال",
+            "إجمالي الفائدة المدفوعة: 7,500 ريال"
+        ]
+    },
+    {
+        type: "فرصة استثمارية",
+        title: "استثمار في الذهب",
+        description: "شراء ذهب كاستثمار آمن ضد التضخم وتقلبات السوق",
+        cost: 30000,
+        downPayment: 30000,
+        cashFlow: 100,
+        details: [
+            "قيمة الاستثمار: 30,000 ريال",
+            "لا يوجد تمويل أو قروض",
+            "عائد شهري تقديري: 100 ريال",
+            "حماية من التضخم وتقلبات السوق"
+        ]
+    },
+    {
+        type: "فرصة استثمارية",
+        title: "فرصة عمل جزئي",
+        description: "عمل إضافي لزيادة الدخل",
+        cost: 0,
+        downPayment: 0,
+        cashFlow: 150,
+        details: [
+            "لا توجد تكلفة",
+            "دخل إضافي: 150 ريال شهرياً",
+            "يتطلب وقتاً إضافياً"
+        ]
+    },
+    {
+        type: "فرصة استثمارية",
+        title: "مشروع بيض الدواجن",
+        description: "استثمار في مشروع بيض الدواجن",
+        cost: 30000,
+        downPayment: 20000,
+        cashFlow: 1000,
+        details: [
+            "سعر الشراء: 30,000 ريال",
+            "دفعة أولى: 20,000 ريال",
+            "التدفق النقدي: +1,000 ريال"
+        ]
+    },
+    {
+        type: "فرصة استثمارية",
+        title: "مشروع إنتاج بيض الدواجن",
+        description: "استثمار في مزرعة دواجن لإنتاج البيض المحلي وبيعه للمحلات والأسواق.",
+        cost: 80000,
+        downPayment: 30000,
+        cashFlow: 1500,
+        details: [
+            "تكلفة المشروع الكلية: 80,000 ريال",
+            "دفعة أولى: 30,000 ريال",
+            "قرض تمويلي: 50,000 ريال (قسط شهري 1,500 ريال)",
+            "إيرادات المبيعات الشهرية: 5,000 ريال",
+            "صافي الربح الشهري: +1,500 ريال",
+            "الطلب المحلي على البيض مرتفع مما يجعل العائد مستقرًا"
+        ]
+    },
+    {
+        type: "فرصة استثمارية",
+        title: "محطة وقود صغيرة",
+        description: "استثمار في محطة وقود متوسطة الحجم على طريق رئيسي في ضواحي المدينة.",
+        cost: 1200000,
+        downPayment: 200000,
+        cashFlow: 7000,
+        details: [
+            "تكلفة الإنشاء والتجهيز: 1,200,000 ريال",
+            "دفعة أولى: 200,000 ريال",
+            "قرض تمويلي: 1,000,000 ريال (قسط شهري 13,000 ريال)",
+            "دخل شهري تقريبي: 20,000 ريال",
+            "صافي التدفق النقدي: +7,000 ريال",
+            "موقع استراتيجي على طريق سريع يضمن استقرار الأرباح"
+        ]
+    },
+    {
+        type: "فرصة استثمارية",
+        title: "منصة تعليم إلكتروني",
+        description: "استثمار في منصة رقمية سعودية لتقديم الدورات التدريبية عن بعد.",
+        cost: 100000,
+        downPayment: 30000,
+        cashFlow: 1200,
+        details: [
+            "قيمة الاستثمار: 100,000 ريال",
+            "دفعة أولى: 30,000 ريال",
+            "قرض تمويلي: 70,000 ريال (قسط شهري 1,000 ريال)",
+            "دخل شهري من الاشتراكات: 2,200 ريال",
+            "صافي التدفق النقدي: +1,200 ريال",
+            "نمو قوي في الطلب على التعليم الإلكتروني داخل المملكة"
+        ]
+    },
+    {
+        type: "فرصة استثمارية",
+        title: "مخبز آلي حديث",
+        description: "استثمار في مخبز آلي لإنتاج الخبز والمعجنات باستخدام خطوط إنتاج حديثة.",
+        cost: 250000,
+        downPayment: 50000,
+        cashFlow: 2000,
+        details: [
+            "تكلفة المشروع الكلية: 250,000 ريال",
+            "دفعة أولى: 50,000 ريال",
+            "قرض تمويلي: 200,000 ريال (قسط شهري 3,500 ريال)",
+            "إيرادات شهرية: 5,500 ريال",
+            "صافي التدفق النقدي: +2,000 ريال",
+            "المخبوزات من السلع الأساسية ذات الطلب المستمر"
+        ]
+    },
+    {
+        type: "فرصة استثمارية",
+        title: "تطبيق توصيل محلي",
+        description: "استثمار في تطبيق سعودي لتوصيل الطلبات داخل المدن الصغيرة.",
+        cost: 120000,
+        downPayment: 25000,
+        cashFlow: 1000,
+        details: [
+            "تكلفة التطوير والتشغيل: 120,000 ريال",
+            "دفعة أولى: 25,000 ريال",
+            "قرض تمويلي: 95,000 ريال (قسط شهري 2,000 ريال)",
+            "دخل شهري من العمولات: 3,000 ريال",
+            "صافي التدفق النقدي: +1,000 ريال",
+            "نمو متزايد في قطاع التوصيل داخل المدن السعودية"
+        ]
+    },
+    {
+        type: "فرصة استثمارية",
+        title: "عيادة طبية متخصصة",
+        description: "استثمار في عيادة صغيرة متخصصة في العلاج الطبيعي والتأهيل.",
+        cost: 400000,
+        downPayment: 80000,
+        cashFlow: 3000,
+        details: [
+            "تكلفة الإنشاء والتجهيز: 400,000 ريال",
+            "دفعة أولى: 80,000 ريال",
+            "قرض تمويلي: 320,000 ريال (قسط شهري 6,000 ريال)",
+            "دخل شهري: 9,000 ريال",
+            "صافي التدفق النقدي: +3,000 ريال",
+            "الطلب على خدمات العلاج الطبيعي في ازدياد داخل المملكة"
+        ]
+    },
+    {
+        type: "فرصة استثمارية",
+        title: "مزرعة تمور صغيرة",
+        description: "استثمار في زراعة وإنتاج التمور المحلية ذات الجودة العالية.",
+        cost: 150000,
+        downPayment: 30000,
+        cashFlow: 1500,
+        details: [
+            "تكلفة المشروع: 150,000 ريال",
+            "دفعة أولى: 50,000 ريال",
+            "قرض تمويلي: 70,000 ريال (قسط شهري 1,500 ريال)",
+            "دخل شهري من بيع التمور: 3,000 ريال",
+            "صافي التدفق النقدي: +1,500 ريال",
+            "المملكة من أكبر منتجي التمور في العالم مما يعزز استقرار العائد"
+        ]
+    },
+    {
+        type: "فرصة استثمارية",
+        title: "استثمار في الطاقة الشمسية أو الرياح",
+        description: "تركيب أنظمة طاقة شمسية للمنازل والمزارع بعائد مستقر وطويل الأجل.",
+        cost: 120000,
+        downPayment: 35000,
+        cashFlow: 1300,
+        details: [
+            "تكلفة المشروع: 120,000 ريال",
+            "دفعة أولى: 35,000 ريال",
+            "قرض تمويلي: 65,000 ريال (قسط شهري 1,200 ريال)",
+            "دخل شهري من توفير فاتورة الكهرباء وبيع الفائض: 2,500 ريال",
+            "صافي التدفق النقدي: +1,300 ريال",
+            "توجه وطني متزايد للطاقة النظيفة في السعودية"
+        ]
+    },
+    {
+        type: "فرصة استثمارية",
+        title: "مستودع تبريد للأغذية",
+        description: "استثمار في إنشاء مستودع صغير لتخزين المواد الغذائية المبردة.",
+        cost: 300000,
+        downPayment: 70000,
+        cashFlow: 2500,
+        details: [
+            "تكلفة المشروع: 300,000 ريال",
+            "دفعة أولى: 70,000 ريال",
+            "قرض تمويلي: 230,000 ريال (قسط شهري 4,500 ريال)",
+            "دخل شهري من تأجير المساحات: 7,000 ريال",
+            "صافي التدفق النقدي: +2,500 ريال",
+            "ارتفاع الطلب على خدمات التخزين المبرد في المناطق الحضرية"
+        ]
+    },
+    {
+        type: "فرصة استثمارية",
+        title: "شركة تسويق إلكتروني",
+        description: "استثمار في وكالة تسويق رقمية تقدم خدمات الإعلان وإدارة المحتوى.",
+        cost: 30000,
+        downPayment: 15000,
+        cashFlow: 1000,
+        details: [
+            "قيمة الاستثمار: 30,000 ريال",
+            "دفعة أولى: 15,000 ريال",
+            "قرض تمويلي: 15,000 ريال (قسط شهري 700 ريال)",
+            "دخل شهري من العقود التسويقية: 1,700 ريال",
+            "صافي التدفق النقدي: +1,000 ريال",
+            "نمو كبير في الطلب على خدمات التسويق الرقمي في المملكة"
+        ]
+    },
+    {
+        type: "فرصة استثمارية",
+        title: "متجر إلكتروني للمنتجات المحلية",
+        description: "استثمار في منصة إلكترونية لبيع منتجات حرفية وغذائية سعودية.",
+        cost: 10000,
+        cashFlow: 200,
+        details: [
+            "تكلفة الإنشاء والتسويق: 10,000 ريال",
+            "صافي التدفق النقدي: +200 ريال",
+            "دعم حكومي متزايد لمتاجر المنتجات الوطنية"
+        ]
+    },
+    {
+        type: "فرصة استثمارية",
+        title: "استثمار في وحدات سكنية قصيرة الأجل",
+        description: "شراء وحدة سكنية وتأجيرها عبر تطبيقات الحجز مثل Airbnb.",
+        cost: 400000,
+        downPayment: 80000,
+        cashFlow: 3000,
+        details: [
+            "تكلفة الوحدة: 400,000 ريال",
+            "دفعة أولى: 80,000 ريال",
+            "قرض تمويلي: 320,000 ريال (قسط شهري 6,000 ريال)",
+            "دخل شهري من الإيجار القصير: 9,000 ريال",
+            "صافي التدفق النقدي: +3,000 ريال",
+            "ازدياد الطلب على الإقامات القصيرة في المدن السياحية السعودية"
+        ]
+    },
+    {
+        type: "فرصة استثمارية",
+        title: "مشروع مغسلة سيارات",
+        description: "إنشاء مغسلة سيارات أوتوماتيكية في منطقة سكنية مزدحمة.",
+        cost: 180000,
+        downPayment: 40000,
+        cashFlow: 2000,
+        details: [
+            "تكلفة المشروع: 180,000 ريال",
+            "دفعة أولى: 40,000 ريال",
+            "قرض تمويلي: 140,000 ريال (قسط شهري 3,000 ريال)",
+            "دخل شهري تقريبي: 5,000 ريال",
+            "صافي التدفق النقدي: +2,000 ريال",
+            "الموقع هو العامل الأساسي في نجاح المشروع"
+        ]
+    },
+    {
+        type: "فرصة استثمارية",
+        title: "تجارة إلكترونية بالدروبشيبينغ",
+        description: "إنشاء متجر إلكتروني يبيع منتجات دون الحاجة لمخزون باستخدام الدروبشيبينغ.",
+        cost: 3000,
+        downPayment: 0,
+        cashFlow: 600,
+        details: [
+            "رأس المال المطلوب: 3,000 ريال",
+            "تغطية تكاليف التصميم والإعلانات الأولية",
+            "أرباح شهرية متوسطة: 600 ريال",
+            "لا حاجة لتخزين البضائع أو الشحن اليدوي",
+            "يتطلب متابعة وإدارة تسويق عبر الإنترنت"
+        ]
+    },
+    {
+        type: "فرصة استثمارية",
+        title: "بيع منتجات عبر إنستغرام",
+        description: "بدء مشروع بسيط لبيع منتجات يدوية أو محلية عبر وسائل التواصل الاجتماعي.",
+        cost: 1000,
+        downPayment: 0,
+        cashFlow: 50,
+        details: [
+            "رأس المال المطلوب: 1,000 ريال",
+            "يشمل تغليف وتسويق بسيط على إنستغرام وسناب",
+            "أرباح شهرية تقديرية: 50 ريال",
+            "منتجات مقترحة: عطور، بخور، أكسسورات، شاي عضوي",
+            "قابل للتوسع بسهولة عند زيادة الطلب"
+        ]
+    },
+    {
+        type: "فرصة استثمارية",
+        title: "تقديم خدمة تصميم عبر الإنترنت",
+        description: "استثمار في مهارة التصميم لبيع خدمات تصميم الشعارات والمنشورات.",
+        cost: 1500,
+        downPayment: 0,
+        cashFlow: 150,
+        details: [
+            "رأس المال المطلوب: 1,500 ريال (شراء برامج وأدوات)",
+            "متوسط أرباح شهرية: 150 ريال",
+            "يحتاج لمهارة في Canva أو Photoshop",
+            "العمل عن بعد عبر منصات مثل خمسات أو مستقل",
+            "مخاطر منخفضة وتكاليف تشغيل شبه معدومة"
+        ]
+    },
+    {
+        type: "فرصة استثمارية",
+        title: "استثمار في صناديق الريت (REITs)",
+        description: "شراء وحدات في صناديق الاستثمار العقاري المتداولة عبر السوق المالية.",
+        cost: 5000,
+        downPayment: 0,
+        cashFlow: 200,
+        details: [
+            "الحد الأدنى للاستثمار: 5,000 ريال",
+            "عوائد توزيعات ربع سنوية بحدود 3٪ إلى 6٪ سنويًا",
+            "استثمار شبه سلبي وبدون إدارة مباشرة",
+            "قابل للبيع في أي وقت عبر السوق المالية السعودية (تداول)",
+            "مخاطر منخفضة مقارنة بالعقار المباشر"
+        ]
+    },
+    {
+        type: "فرصة استثمارية",
+        title: "مشروع تغليف الهدايا",
+        description: "خدمة تغليف الهدايا المنزلي.",
+        cost: 3000,
+        downPayment: 0,
+        cashFlow: 100,
+        details: [
+            "رأس المال المطلوب: 4,000 ريال",
+            "يشمل أدوات تغليف، شرائط، صناديق، تغليف فاخر",
+            "أرباح شهرية متوقعة: 600 ريال",
+            "إقبال كبير في المواسم والمناسبات",
+            "قابل للتوسع بإضافة تنسيق باقات ورد وهدايا"
+        ]
+    },
+    {
+        type: "فرصة استثمارية",
+        title: "تأجير ألعاب الأطفال موسمي",
+        description: "شراء ألعاب قابلة للنفخ وتأجيرها في المناسبات العائلية.",
+        cost: 7000,
+        downPayment: 0,
+        cashFlow: 150,
+        details: [
+            "رأس المال المطلوب: 7,000 ريال",
+            "شراء لعبتين إلى ثلاث ألعاب قابلة للنفخ موسمي",
+            "تأجير أسبوعي يحقق عائد شهري حوالي 150 ريال",
+            "طلب مرتفع في الأحياء والمناسبات الصغيرة",
+            "إدارة بسيطة وتكلفة صيانة منخفضة"
+        ]
+    }
+];
+        // بيانات البطاقات - سوق إضافية
+const marketCards = [
+    {
+        type: "سوق",
+        title: "ارتفاع أسعار العقارات",
+        description: "ارتفاع أسعار العقارات بنسبة 10% في السوق",
+        effect: "property_value_up",
+        details: [
+            "يمكنك بيع أي عقار تمتلكه بسعر أعلى بنسبة 10%",
+            "زيادة محتملة في قيمة محفظتك العقارية"
+        ]
+    },
+    {
+        type: "سوق",
+        title: "انخفاض أسعار العقارات",
+        description: "انخفاض أسعار العقارات بنسبة 15% في السوق",
+        effect: "property_value_down",
+        details: [
+            "انخفاض قيمة العقارات التي تمتلكها بنسبة 15%",
+            "فرصة لشراء عقارات بسعر أقل"
+        ]
+    },
+    {
+        type: "سوق",
+        title: "ازدهار سوق الأسهم",
+        description: "ارتفاع ملحوظ في سوق الأسهم المحلية",
+        effect: "stock_market_up",
+        details: [
+            "زيادة في قيمة محفظتك الاستثمارية",
+            "فرص استثمارية جديدة في الأسهم"
+        ]
+    },
+    {
+        type: "سوق",
+        title: "كساد اقتصادي",
+        description: "تراجع في النشاط الاقتصادي يؤثر على الاستثمارات",
+        effect: "recession",
+        details: [
+            "انخفاض في قيمة جميع الاستثمارات بنسبة 10%",
+            "صعوبة في بيع الأصول"
+        ]
+    },
+    {
+        type: "سوق",
+        title: "طفرة عقارية",
+        description: "طفرة غير متوقعة في سوق العقارات",
+        effect: "property_boom",
+        details: [
+            "ارتفاع أسعار العقارات بنسبة 40%",
+            "مضاعفة الإيرادات الإيجارية",
+            "فرصة ذهبية للبيع والشراء"
+        ]
+    },
+    {
+        type: "سوق",
+        title: "أزمة سكنية",
+        description: "أزمة سكنية ترفع أسعار الإيجارات",
+        effect: "rent_increase",
+        details: [
+            "زيادة الإيرادات الإيجارية بنسبة 30%",
+            "ارتفاع الطلب على الوحدات السكنية",
+            "تحسن التدفق النقدي من العقارات"
+        ]
+    },
+    {
+        type: "سوق",
+        title: "تقلبات العملات",
+        description: "تقلبات حادة في أسعار العملات",
+        effect: "currency_fluctuation",
+        details: [
+            "تأثير إيجابي على بعض الاستثمارات",
+            "تأثير سلبي على استثمارات أخرى",
+            "فرص للمضاربة في الأسواق المالية"
+        ]
+    },
+    {
+        type: "سوق",
+        title: "دعم حكومي للاستثمار",
+        description: "حزمة تحفيزية حكومية للاستثمار",
+        effect: "government_support",
+        details: [
+            "تخفيضات ضريبية للاستثمارات الجديدة",
+            "قروض ميسرة للمشاريع الصغيرة",
+            "فرص استثمارية مدعومة"
+        ]
+    },
+    {
+        type: "سوق",
+        title: "تضخم اقتصادي",
+        description: "ارتفاع معدلات التضخم في الاقتصاد",
+        effect: "inflation",
+        details: [
+            "انخفاض القيمة الحقيقية للديون",
+            "ارتفاع تكاليف المعيشة",
+            "زيادة أسعار الأصول"
+        ]
+    },
+    {
+        type: "سوق",
+        title: "ارتفاع أسعار الفائدة",
+        description: "البنك المركزي يرفع أسعار الفائدة",
+        effect: "interest_rates_up",
+        details: [
+            "زيادة في تكاليف القروض",
+            "انخفاض في قيمة السندات"
+        ]
+    }
+];
+       // بيانات البطاقات - دورة الحياة مع عقبات إضافية
+const lifeCards = [
+    {
+        type: "دورة الحياة",
+        title: "مفاجأة سعيدة",
+        description: "مكافأة غير متوقعة من عائلتك",
+        effect: "bonus",
+        amount: 5000,
+        details: [
+            "حصلت على مكافأة قدرها 5,000 ريال",
+            "تم إيداع المبلغ مباشرة في حسابك"
+        ]
+    },
+    {
+        type: "دورة الحياة",
+        title: "مصروف غير متوقع",
+        description: "إصلاحات منزلية ضرورية",
+        effect: "expense",
+        amount: 3000,
+        details: [
+            "تكلفة الإصلاحات: 3,000 ريال",
+            "سيتم خصم المبلغ من حسابك"
+        ]
+    },
+    {
+        type: "دورة الحياة",
+        title: "مرض مفاجئ",
+        description: "حاجة إلى علاج طبي عاجل",
+        effect: "medical_expense",
+        amount: 4000,
+        details: [
+            "تكاليف العلاج: 4,000 ريال",
+            "سيتم خصم المبلغ من حسابك"
+        ]
+    },
+    {
+        type: "دورة الحياة",
+        title: "ضريبة مفاجئة",
+        description: "فرضت الحكومة ضريبة جديدة",
+        effect: "tax",
+        amount: 2500,
+        details: [
+            "مبلغ الضريبة: 2,500 ريال",
+            "سيتم خصم المبلغ من حسابك"
+        ]
+    },
+    {
+        type: "دورة الحياة",
+        title: "مشكلة قانونية",
+        description: "حاجة إلى محامٍ للدفاع عن قضية",
+        effect: "legal_expense",
+        amount: 6000,
+        details: [
+            "تكاليف المحاماة: 6,000 ريال",
+            "سيتم خصم المبلغ من حسابك"
+        ]
+    },
+    {
+        type: "دورة الحياة",
+        title: "تلف في المنزل",
+        description: "تلف مفاجئ في الأثاث والأجهزة",
+        effect: "home_damage",
+        amount: 4500,
+        details: [
+            "تكاليف الاستبدال: 4,500 ريال",
+            "ضرورة الصيانة الفورية",
+            "سيتم خصم المبلغ من حسابك"
+        ]
+    },
+    {
+        type: "دورة الحياة",
+        title: "رسوم دراسة الأبناء",
+        description: "رسوم مدرسية ودراسية إضافية",
+        effect: "education_fees",
+        amount: 6000,
+        details: [
+            "مصاريف تعليمية: 6,000 ريال",
+            "تكاليف الكتب والمواد الدراسية",
+            "استثمار في تعليم الأبناء"
+        ]
+    },
+    {
+        type: "دورة الحياة",
+        title: "مناسبة زواج",
+        description: "تكاليف حفل زفاف أحد الأقارب",
+        effect: "wedding_expense",
+        amount: 5000,
+        details: [
+            "مساهمة في حفل الزفاف: 5,000 ريال",
+            "هدايا وتكاليف إضافية",
+            "التزامات عائلية اجتماعية"
+        ]
+    },
+    {
+        type: "دورة الحياة",
+        title: "تعديل ضريبي",
+        description: "تعديل في الإقرارات الضريبية",
+        effect: "tax_adjustment",
+        amount: 5500,
+        details: [
+            "ضرائب مستحقة: 5,500 ريال",
+            "غرامات تأخير محتملة",
+            "التزام قانوني فوري"
+        ]
+    },
+    {
+        type: "دورة الحياة",
+        title: "تطوير مهني",
+        description: "دورة تدريبية متقدمة لتعزيز المهارات",
+        effect: "professional_development",
+        amount: 3000,
+        cashFlow: 100,
+        details: [
+            "رسوم الدورة: 3,000 ريال",
+            "زيادة في الراتب الشهري: 100 ريال",
+            "استثمار في التنمية الشخصية"
+        ]
+    },
+    {
+        type: "دورة الحياة",
+        title: "ميراث غير متوقع",
+        description: "ورثت مبلغاً مالياً من قريب",
+        effect: "inheritance",
+        amount: 25000,
+        details: [
+            "مبلغ الميراث: 25,000 ريال",
+            "هدية مالية غير متوقعة",
+            "تم إيداع المبلغ في حسابك"
+        ]
+    },
+    {
+        type: "دورة الحياة",
+        title: "مسؤولية عائلية",
+        description: "رعاية أحد أفراد العائلة المسنين",
+        effect: "family_care",
+        amount: 1500,
+        duration: 12,
+        details: [
+            "مصاريف رعاية شهرية: 1,500 ريال",
+            "التزام طويل الأمد لمدة عام",
+            "مسؤولية أسرية إضافية"
+        ]
+    },
+    {
+        type: "دورة الحياة",
+        title: "شهادة تقدير",
+        description: "مكافأة تقديرية من العمل",
+        effect: "recognition_bonus",
+        amount: 2000,
+        details: [
+            "مكافأة أداء: 2,000 ريال",
+            "تقدير للجهود المبذولة",
+            "تحفيز للاستمرار في التميز"
+        ]
+    },
+    {
+        type: "دورة الحياة",
+        title: "خسارة في العمل",
+        description: "خسارة عقد مهم يؤثر على دخلك",
+        effect: "income_loss",
+        amount: 2000,
+        duration: 3,
+        details: [
+            "خسارة في الدخل الشهري: 2,000 ريال",
+            "سيستمر هذا لمدة 3 أشهر"
+        ]
+    },
+    {
+        type: "دورة الحياة",
+        title: "حادث سيارة",
+        description: "حادث سيارة يتطلب إصلاحات",
+        effect: "car_accident",
+        amount: 3500,
+        details: [
+            "تكاليف الإصلاح: 3,500 ريال",
+            "سيتم خصم المبلغ من حسابك"
+        ]
+    },
+    {
+        type: "دورة الحياة",
+        title: "وليمة عائلية",
+        description: "مناسبة عائلية تتطلب مصاريف إضافية",
+        effect: "family_event",
+        amount: 2000,
+        details: [
+            "مصاريف المناسبة: 2,000 ريال",
+            "سيتم خصم المبلغ من حسابك"
+        ]
+    },
+    {
+        type: "دورة الحياة",
+        title: "سفر مفاجئ",
+        description: "سفر ضروري لظروف عائلية",
+        effect: "travel_expense",
+        amount: 4000,
+        details: [
+            "تكاليف السفر: 4,000 ريال",
+            "سيتم خصم المبلغ من حسابك"
+        ]
+    },
+    {
+        type: "دورة الحياة",
+        title: "هدية غير متوقعة",
+        description: "حصلت على هدية مالية من قريب",
+        effect: "gift",
+        amount: 3000,
+        details: [
+            "هدية مالية: 3,000 ريال",
+            "تم إيداع المبلغ في حسابك"
+        ]
+    }
+];
+          const fastTrackCards = [
+    {
+        type: "المسار السريع",
+        title: "صفقة عقارية فاخرة",
+        description: "شراء عمارة سكنية فاخرة في حي راقٍ وتحصيل عائد شهري كبير.",
+        cost: 1200000,
+        return: 200000,
+        details: [
+            "سعر الصفقة: 1,200,000 ريال",
+            "عائد سنوي متوقع: 200,000 ريال",
+            "فرصة قوية لزيادة قيمة الأصل مع الوقت"
+        ]
+    },
+    {
+        type: "المسار السريع",
+        title: "الاستثمار في منتجع سياحي",
+        description: "استثمار في منتجع ساحلي بمنطقة واعدة في المملكة.",
+        cost: 1500000,
+        return: 250000,
+        details: [
+            "رأس المال المطلوب: 1,500,000 ريال",
+            "عائد سنوي متوقع: 250,000 ريال",
+            "مخاطرة: متوسطة — تعتمد على السياحة المحلية"
+        ]
+    },
+    {
+        type: "المسار السريع",
+        title: "الاستثمار في شركة تقنية ناشئة",
+        description: "شراء حصة في شركة تقنية سريعة النمو تعمل في مجال الذكاء الاصطناعي.",
+        cost: 500000,
+        return: 150000,
+        details: [
+            "استثمار: 500,000 ريال",
+            "عائد محتمل: 150,000 ريال خلال عامين",
+            "مخاطرة: عالية — احتمال ربح ضخم أو خسارة كاملة"
+        ]
+    },
+    {
+        type: "المسار السريع",
+        title: "توسيع سلسلة مطاعم",
+        description: "شراء حصة في توسع سلسلة مطاعم ناجحة إلى مدن جديدة.",
+        cost: 800000,
+        return: 180000,
+        details: [
+            "تكلفة المشاركة: 800,000 ريال",
+            "عائد سنوي متوقع: 180,000 ريال",
+            "عقود تشغيل طويلة الأمد — أرباح مستقرة"
+        ]
+    },
+    {
+        type: "المسار السريع",
+        title: "شراء أرض تطوير",
+        description: "شراء أرض خام على أطراف المدينة بهدف تطويرها لاحقًا وبيعها.",
+        cost: 1000000,
+        return: 400000,
+        details: [
+            "سعر الشراء: 1,000,000 ريال",
+            "البيع المتوقع بعد التطوير: 1,400,000 ريال",
+            "مدة الاستثمار: سنتان"
+        ]
+    },
+    {
+        type: "المسار السريع",
+        title: "الاستثمار في محطة طاقة متجددة",
+        description: "المشاركة في مشروع طاقة شمسية بعقود توريد طويلة الأمد.",
+        cost: 2000000,
+        return: 300000,
+        details: [
+            "استثمار: 2,000,000 ريال",
+            "عائد سنوي مضمون بعقد حكومي: 300,000 ريال",
+            "استثمار طويل الأجل، مستقر ومنخفض المخاطرة"
+        ]
+    },
+    {
+        type: "المسار السريع",
+        title: "شراء حصة في نادي رياضي ناشئ",
+        description: "استثمار في سلسلة نوادي لياقة حديثة تشهد نمواً سريعاً.",
+        cost: 600000,
+        return: 120000,
+        details: [
+            "قيمة الحصة: 600,000 ريال",
+            "عائد سنوي: 120,000 ريال",
+            "احتمال مضاعفة القيمة خلال 3 سنوات"
+        ]
+    },
+    {
+        type: "المسار السريع",
+        title: "تأسيس صندوق عقاري خاص",
+        description: "الانضمام إلى مستثمرين لإنشاء صندوق عقاري متوسط الحجم.",
+        cost: 1000000,
+        return: 200000,
+        details: [
+            "المساهمة: 1,000,000 ريال",
+            "عائد سنوي موزع: 200,000 ريال",
+            "فرصة سيولة عالية وإدارة مهنية"
+        ]
+    },
+    {
+        type: "المسار السريع",
+        title: "الاستثمار في مشروع ترفيهي",
+        description: "إنشاء منطقة ألعاب وترفيه عائلية حديثة.",
+        cost: 900000,
+        return: 220000,
+        details: [
+            "تكلفة الإنشاء والتشغيل: 900,000 ريال",
+            "عائد سنوي متوقع: 220,000 ريال",
+            "مخاطرة: متوسطة — تعتمد على الإقبال المحلي"
+        ]
+    },
+    {
+        type: "المسار السريع",
+        title: "تحقيق الهدف الحلم",
+        description: "تحقق حلمك المالي عبر استثمار ناجح غيّر حياتك!",
+        cost: 0,
+        return: 1000000,
+        details: [
+            "لقد حققت هدفك المالي النهائي 🎉",
+            "الحرية المالية الكاملة أصبحت واقعك",
+            "أنت الفائز في اللعبة!"
+        ]
+    }
+];
+   // === نظام التحديات والإنجازات ===
+        const achievements = [
+            { 
+                id: 1, 
+                name: "المستثمر الناشئ", 
+                description: "امتلك 3 أصول على الأقل",
+                condition: (player) => player.assets.length >= 3,
+                reward: 5000,
+                icon: "📈"
+            },
+            { 
+                id: 2, 
+                name: "ملك العقارات", 
+                description: "امتلك 5 عقارات على الأقل",
+                condition: (player) => player.assets.filter(a => a.name.includes("عقار")).length >= 5,
+                reward: 15000,
+                icon: "🏠"
+            },
+            { 
+                id: 3, 
+                name: "التاجر الذكي", 
+                description: "حقق تدفق نقدي 10,000 ريال",
+                condition: (player) => player.cashFlow >= 10000,
+                reward: 10000,
+                icon: "💼"
+            },
+            { 
+                id: 4, 
+                name: "الثراء السريع", 
+                description: "انقل إلى المسار السريع",
+                condition: (player) => player.onFastTrack,
+                reward: 20000,
+                icon: "🚀"
+            },
+            { 
+                id: 5, 
+                name: "المليونير", 
+                description: "اجمع مليون ريال",
+                condition: (player) => player.cash >= 1000000,
+                reward: 50000,
+                icon: "💰"
+            }
+        ];
+
+        let unlockedAchievements = [];
+
+        // === الأحداث الاقتصادية ===
+        const economicEvents = [
+            {
+                title: "جائحة عالمية",
+                description: "تأثير سلبي على جميع الاستثمارات بسبب أزمة صحية",
+                effect: "negative",
+                action: (players) => {
+                    players.forEach(player => {
+                        player.assets.forEach(asset => {
+                            asset.cashFlow = Math.round(asset.cashFlow * 0.7);
+                        });
+                    });
+                    return "انخفضت عوائد جميع الاستثمارات بنسبة 30%";
+                }
+            },
+            {
+                title: "طفرة اقتصادية",
+                description: "تحسن في الظروف الاقتصادية يعزز الاستثمارات",
+                effect: "positive", 
+                action: (players) => {
+                    players.forEach(player => {
+                        player.assets.forEach(asset => {
+                            asset.cashFlow = Math.round(asset.cashFlow * 1.2);
+                        });
+                    });
+                    return "ارتفعت عوائد جميع الاستثمارات بنسبة 20%";
+                }
+            },
+            {
+                title: "تضخم مالي",
+                description: "ارتفاع الأسعار يؤثر على القوة الشرائية",
+                effect: "negative",
+                action: (players) => {
+                    players.forEach(player => {
+                        player.expenses = Math.round(player.expenses * 1.15);
+                        player.cashFlow = player.salary - player.expenses;
+                    });
+                    return "ارتفعت النفقات المعيشية بنسبة 15%";
+                }
+            }
+        ];
+
+        // === حالة اللعبة الأساسية ===
+        let gameState = {
+            players: [],
+            currentPlayerIndex: 0,
+            properties: {},
+            gameStarted: false,
+            diceRolled: false,
+            fastTrackPlayers: []
+        };
+
+        // === عناصر DOM الأساسية ===
+        const setupScreen = document.getElementById('setupScreen');
+        const playersSetup = document.getElementById('playersSetup');
+        const startGameBtn = document.getElementById('startGame');
+        const loadGameBtn = document.getElementById('loadGame');
+        const playersContainer = document.getElementById('playersContainer');
+        const currentPlayerStatement = document.getElementById('currentPlayerStatement');
+        const gameLog = document.getElementById('gameLog');
+        const rollDiceBtn = document.getElementById('rollDice');
+        const buyPropertyBtn = document.getElementById('buyProperty');
+        const endTurnBtn = document.getElementById('endTurn');
+        const saveGameBtn = document.getElementById('saveGame');
+        const showAnalyticsBtn = document.getElementById('showAnalytics');
+        const newGameBtn = document.getElementById('newGame');
+        const cardPopup = document.getElementById('cardPopup');
+        const overlay = document.getElementById('overlay');
+        const acceptCardBtn = document.getElementById('acceptCard');
+        const rejectCardBtn = document.getElementById('rejectCard');
+        const cardHeader = document.getElementById('cardHeader');
+        const cardCost = document.getElementById('cardCost');
+        const cardContent = document.getElementById('cardContent');
+      
+        
+        
+         // event listeners الجديدة
+        saveGameBtn.addEventListener('click', saveGame);
+        showAnalyticsBtn.addEventListener('click', function() {
+            showFinancialAnalytics();
+            addToLog("📊 تم عرض التحليلات المالية");
+        });
+
+        loadGameBtn.addEventListener('click', loadGame);
+
+        // === الدوال الأساسية ===
+        function initGame() {
+            setupScreen.style.display = 'flex';
+            renderProfessionOptions();
+        }
+
+        function renderProfessionOptions() {
+            playersSetup.innerHTML = '';
+            
+            const playerCountHTML = `
+                <div class="player-setup">
+                    <label for="playerCount">عدد اللاعبين:</label>
+                    <select id="playerCount">
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                    </select>
+                </div>
+            `;
+            playersSetup.innerHTML = playerCountHTML;
+            
+            const playerCount = document.getElementById('playerCount');
+            playerCount.addEventListener('change', updatePlayerProfessions);
+            updatePlayerProfessions();
+        }
+
+        function updatePlayerProfessions() {
+            const count = parseInt(document.getElementById('playerCount').value);
+            let professionsHTML = '';
+            
+            for (let i = 0; i < count; i++) {
+                professionsHTML += `
+                    <div class="player-setup">
+                        <h3>اللاعب ${i+1}</h3>
+                        <div class="profession-options">
+                            ${professions.map(prof => `
+                                <div class="profession-option ${i === 0 && prof.id === 1 ? 'selected' : ''}" data-player="${i}" data-profession="${prof.id}">
+                                    <div class="profession-name">${prof.name} <span class="player-color" style="background-color: ${prof.color}"></span></div>
+                                    <div class="profession-details">${prof.description}</div>
+                                    <div>الراتب: ${prof.salary} ريال | المصروفات: ${prof.expenses} ريال</div>
+                                    <div>المدخرات: ${prof.savings} ريال | مستوى المخاطرة: ${prof.risk}</div>
+                                    <div>الهدف: تدفق نقدي إيجابي (الدخل السلبي ≥ ${prof.passiveIncomeGoal} ريال)</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            playersSetup.innerHTML += professionsHTML;
+            
+            document.querySelectorAll('.profession-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const playerIndex = parseInt(this.getAttribute('data-player'));
+                    const professionId = parseInt(this.getAttribute('data-profession'));
+                    
+                    document.querySelectorAll(`.profession-option[data-player="${playerIndex}"]`).forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    
+                    this.classList.add('selected');
+                });
+            });
+        }
+
+        // === Event Listeners الأساسية ===
+        startGameBtn.addEventListener('click', function() {
+            const playerCount = parseInt(document.getElementById('playerCount').value);
+            gameState.players = [];
+            gameState.fastTrackPlayers = [];
+            
+            for (let i = 0; i < playerCount; i++) {
+                const selectedProfession = document.querySelector(`.profession-option.selected[data-player="${i}"]`);
+                if (!selectedProfession) {
+                    alert(`يرجى اختيار مهنة للاعب ${i+1}`);
+                    return;
+                }
+                
+                const professionId = parseInt(selectedProfession.getAttribute('data-profession'));
+                const profession = professions.find(p => p.id === professionId);
+                
+                gameState.players.push({
+                    id: i,
+                    name: `اللاعب ${i+1}`,
+                    profession: profession.name,
+                    color: profession.color,
+                    position: 0,
+                    cash: profession.savings,
+                    salary: profession.salary,
+                    expenses: profession.expenses,
+                    cashFlow: profession.salary - profession.expenses,
+                    passiveIncomeGoal: profession.passiveIncomeGoal,
+                    assets: [],
+                    liabilities: [],
+                    passedStart: false,
+                    onFastTrack: false,
+                    bankrupt: false
+                });
+            }
+            
+            setupScreen.style.display = 'none';
+            gameState.gameStarted = true;
+            gameState.currentPlayerIndex = 0;
+            gameState.diceRolled = false;
+            
+            renderPlayers();
+            renderCurrentPlayerStatement();
+            updateControls();
+            addToLog("بدأت اللعبة! دور اللاعب 1");
+            
+        });
+
+        function addToLog(message) {
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            logEntry.textContent = message;
+            gameLog.appendChild(logEntry);
+            gameLog.scrollTop = gameLog.scrollHeight;
+        }
+        // === الدوال الأساسية المكملة ===
+        function renderPlayers() {
+            playersContainer.innerHTML = '';
+            
+            gameState.players.forEach((player, index) => {
+                const isCurrent = index === gameState.currentPlayerIndex;
+                const isOnFastTrack = player.onFastTrack;
+                const isBankrupt = player.bankrupt;
+                
+                let playerHTML = `
+                    <div class="player-card ${isCurrent ? 'current-player' : ''} ${isOnFastTrack ? 'fast-track-player' : ''} ${isBankrupt ? 'bankruptcy' : ''}">
+                        <div class="player-name">
+                            <span>${player.name} ${isOnFastTrack ? '(المسار السريع)' : ''} ${isBankrupt ? '(مفلس)' : ''}</span>
+                            <span class="player-color" style="background-color: ${player.color}"></span>
+                        </div>
+                        <div class="player-profession">${player.profession}</div>
+                        <div>النقد: ${player.cash} ريال</div>
+                        <div>التدفق النقدي: ${player.cashFlow} ريال</div>
+                        <div>الأصول: ${player.assets.length}</div>
+                `;
+                
+                if (isOnFastTrack) {
+                    playerHTML += `<div style="color: var(--secondary); font-weight: bold;">في المسار السريع!</div>`;
+                } else if (isBankrupt) {
+                    playerHTML += `<div style="color: var(--danger); font-weight: bold;">أعلن إفلاسه!</div>`;
+                }
+                
+                playerHTML += `</div>`;
+                playersContainer.innerHTML += playerHTML;
+            });
+            
+            updatePlayerPositions();
+        }
+
+        function updatePlayerPositions() {
+            document.querySelectorAll('.player-marker').forEach(marker => {
+                marker.remove();
+            });
+            
+            gameState.players.forEach(player => {
+                if (!player.onFastTrack && !player.bankrupt) {
+                    const cell = document.querySelector(`[data-cell-id="${player.position}"]`);
+                    if (cell) {
+                        const marker = document.createElement('div');
+                        marker.className = 'player-marker';
+                        marker.style.backgroundColor = player.color;
+                        cell.appendChild(marker);
+                    }
+                }
+            });
+        }
+
+        function renderCurrentPlayerStatement() {
+            const player = gameState.players[gameState.currentPlayerIndex];
+            
+            if (player.bankrupt) {
+                currentPlayerStatement.innerHTML = `
+                    <h3>الكشف المالي - ${player.name}</h3>
+                    <div class="bankruptcy">
+                        <h4>أعلنت إفلاسك!</h4>
+                        <p>لقد خسرت كل أموالك ولا يمكنك الاستمرار في اللعبة.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let assetsHTML = '';
+            player.assets.forEach(asset => {
+                assetsHTML += `<div>${asset.name}: ${asset.value} ريال (تدفق: ${asset.cashFlow} ريال)</div>`;
+            });
+            
+            let liabilitiesHTML = '';
+            player.liabilities.forEach(liability => {
+                liabilitiesHTML += `<div>${liability.name}: ${liability.amount} ريال (قسط: ${liability.monthly} ريال/شهر)</div>`;
+            });
+            
+            const totalIncome = player.salary + player.assets.reduce((sum, a) => sum + (a.cashFlow || 0), 0);
+            const totalExpenses = player.expenses + player.liabilities.reduce((sum, l) => sum + l.monthly, 0);
+            
+            currentPlayerStatement.innerHTML = `
+                <h3>الكشف المالي - ${player.name}</h3>
+                
+                <div class="income">
+                    <h4>الدخل الشهري</h4>
+                    <div>الراتب: ${player.salary} ريال</div>
+                    ${player.assets.filter(a => a.cashFlow > 0).map(a => `<div>${a.name}: ${a.cashFlow} ريال</div>`).join('')}
+                    <div><strong>إجمالي الدخل: ${totalIncome} ريال</strong></div>
+                </div>
+                
+                <div class="expenses">
+                    <h4>النفقات الشهرية</h4>
+                    <div>النفقات المعيشية: ${player.expenses} ريال</div>
+                    ${player.liabilities.map(l => `<div>${l.name}: ${l.monthly} ريال</div>`).join('')}
+                    <div><strong>إجمالي النفقات: ${totalExpenses} ريال</strong></div>
+                </div>
+                
+                <div class="cash-flow ${player.cashFlow >= 0 ? 'positive' : 'negative'}">
+                    التدفق النقدي: ${player.cashFlow} ريال
+                </div>
+                
+                <div class="assets">
+                    <h4>الأصول</h4>
+                    ${assetsHTML || '<div>لا توجد أصول</div>'}
+                </div>
+                
+                <div class="liabilities">
+                    <h4>الالتزامات</h4>
+                    ${liabilitiesHTML || '<div>لا توجد التزامات</div>'}
+                </div>
+            `;
+            
+            document.getElementById('playerGoal').textContent = `هدفك: تدفق نقدي إيجابي (الدخل السلبي ≥ ${player.passiveIncomeGoal} ريال)`;
+            
+            if (player.cashFlow >= player.passiveIncomeGoal && !player.onFastTrack) {
+                player.onFastTrack = true;
+                gameState.fastTrackPlayers.push(player.id);
+                addToLog(`🎉 ${player.name} حقق التدفق النقدي المطلوب وانتقل إلى المسار السريع!`);
+                player.cash += 1000000;
+                addToLog(`💰 ${player.name} حصل على مكافأة 1,000,000 ريال للانتقال إلى المسار السريع!`);
+                renderPlayers();
+            }
+        }
+
+        function updateControls() {
+            const player = gameState.players[gameState.currentPlayerIndex];
+            
+            if (player.bankrupt) {
+                rollDiceBtn.disabled = true;
+                buyPropertyBtn.disabled = true;
+                endTurnBtn.disabled = false;
+                return;
+            }
+            
+            if (player.onFastTrack) {
+                rollDiceBtn.disabled = true;
+                buyPropertyBtn.disabled = true;
+                endTurnBtn.disabled = false;
+                addToLog(`${player.name} في المسار السريع ويلعب بطاقات خاصة فقط`);
+                return;
+            }
+            
+            const currentCell = document.querySelector(`[data-cell-id="${player.position}"]`);
+            const cellType = currentCell ? currentCell.getAttribute('data-cell-type') : '';
+            
+            rollDiceBtn.disabled = gameState.diceRolled;
+            
+            if (cellType === 'property' && !gameState.properties[player.position] && player.cash >= parseInt(currentCell.getAttribute('data-price'))) {
+                buyPropertyBtn.disabled = false;
+            } else {
+                buyPropertyBtn.disabled = true;
+            }
+            
+            endTurnBtn.disabled = !gameState.diceRolled;
+        }
+
+        // === نظام البطاقات ===
+        function showOpportunityCard() {
+            const card = opportunities[Math.floor(Math.random() * opportunities.length)];
+            showCard(card);
+        }
+
+        function showMarketCard() {
+            const card = marketCards[Math.floor(Math.random() * marketCards.length)];
+            showCard(card);
+        }
+
+        function showLifeCard() {
+            const card = lifeCards[Math.floor(Math.random() * lifeCards.length)];
+            showCard(card);
+        }
+
+        function showFastTrackCard() {
+            const card = fastTrackCards[Math.floor(Math.random() * fastTrackCards.length)];
+            showCard(card);
+        }
+
+        function showCard(card) {
+            cardHeader.textContent = card.type + ": " + card.title;
+            
+            if (card.cost) {
+                cardCost.textContent = "التكلفة: " + card.cost + " ريال";
+            } else {
+                cardCost.textContent = "";
+            }
+            
+            cardContent.innerHTML = `
+                <p>${card.description}</p>
+                <ul>
+                    ${card.details.map(detail => `<li>${detail}</li>`).join('')}
+                </ul>
+            `;
+            
+            cardPopup.style.display = 'block';
+            overlay.style.display = 'block';
+            cardPopup.currentCard = card;
+        }
+
+        // === معالجة حركة اللاعب ===
+        rollDiceBtn.addEventListener('click', function() {
+            const diceValue = Math.floor(Math.random() * 6) + 1;
+            const player = gameState.players[gameState.currentPlayerIndex];
+            const oldPosition = player.position;
+            
+            player.position = (player.position + diceValue) % 34;
+            
+            if (player.position < oldPosition) {
+                player.cash += 2000;
+                player.passedStart = true;
+                addToLog(`${player.name} مر على نقطة البداية وحصل على 2000 ريال`);
+            }
+            
+            gameState.diceRolled = true;
+            addToLog(`${player.name} رمى النرد وحصل على ${diceValue} وانتقل إلى المربع ${player.position}`);
+            
+            renderPlayers();
+            updateControls();
+            handleCellAction(player.position);
+        });
+
+        function handleCellAction(cellId) {
+            const cell = document.querySelector(`[data-cell-id="${cellId}"]`);
+            const cellType = cell.getAttribute('data-cell-type');
+            const player = gameState.players[gameState.currentPlayerIndex];
+            
+            switch(cellType) {
+                case 'salary':
+                    player.cash += 2000;
+                    addToLog(`${player.name} حصل على راتب إضافي 2000 ريال`);
+                    renderCurrentPlayerStatement();
+                    updateControls();
+                    break;
+                    
+                case 'opportunity':
+                    showOpportunityCard();
+                    break;
+                    
+                case 'market':
+                    showMarketCard();
+                    break;
+                    
+                case 'life':
+                    showLifeCard();
+                    break;
+
+                case 'fast-track':
+                    showFastTrackCard();
+                    break;
+                    
+                case 'property':
+                    if (gameState.properties[cellId] && gameState.properties[cellId].owner !== player.id) {
+                        const owner = gameState.players[gameState.properties[cellId].owner];
+                        const rent = parseInt(cell.getAttribute('data-rent'));
+                        
+                        if (player.cash >= rent) {
+                            player.cash -= rent;
+                            owner.cash += rent;
+                            addToLog(`${player.name} دفع إيجار ${rent} ريال لـ ${owner.name}`);
+                        } else {
+                            addToLog(`${player.name} لا يملك ما يكفي لدفع الإيجار!`);
+                            handleBankruptcy(player);
+                        }
+                        
+                        renderCurrentPlayerStatement();
+                        renderPlayers();
+                    }
+                    break;
+            }
+        }
+
+        function handleBankruptcy(player) {
+            player.bankrupt = true;
+            addToLog(`💔 ${player.name} أعلن إفلاسه وخسر اللعبة!`);
+            
+            Object.keys(gameState.properties).forEach(cellId => {
+                if (gameState.properties[cellId].owner === player.id) {
+                    delete gameState.properties[cellId];
+                    const cell = document.querySelector(`[data-cell-id="${cellId}"]`);
+                    cell.classList.remove('property-owned');
+                }
+            });
+            
+            renderPlayers();
+            renderCurrentPlayerStatement();
+            updateControls();
+        }
+
+        // === نظام الشراء ===
+        buyPropertyBtn.addEventListener('click', function() {
+            const player = gameState.players[gameState.currentPlayerIndex];
+            const cell = document.querySelector(`[data-cell-id="${player.position}"]`);
+            const price = parseInt(cell.getAttribute('data-price'));
+            
+            if (player.cash >= price) {
+                player.cash -= price;
+                
+                const property = {
+                    id: player.position,
+                    name: cell.textContent.trim(),
+                    value: price,
+                    cashFlow: parseInt(cell.getAttribute('data-rent'))
+                };
+                
+                player.assets.push(property);
+                gameState.properties[player.position] = {
+                    owner: player.id,
+                    name: property.name
+                };
+                
+                cell.classList.add('property-owned');
+                addToLog(`${player.name} اشترى ${property.name} بمبلغ ${price} ريال`);
+                
+                renderCurrentPlayerStatement();
+                showFinancialAnalytics();
+                updateControls();
+            }
+        });
+
+        // === نظام الأدوار ===
+        endTurnBtn.addEventListener('click', function() {
+            let nextPlayerIndex = (gameState.currentPlayerIndex + 1) % gameState.players.length;
+            
+            while (gameState.players[nextPlayerIndex].bankrupt && nextPlayerIndex !== gameState.currentPlayerIndex) {
+                nextPlayerIndex = (nextPlayerIndex + 1) % gameState.players.length;
+            }
+            
+            gameState.currentPlayerIndex = nextPlayerIndex;
+            gameState.diceRolled = false;
+            
+            addToLog(`دور ${gameState.players[gameState.currentPlayerIndex].name}`);
+            
+            renderPlayers();
+            renderCurrentPlayerStatement();
+            updateControls();
+              // التحقق من الإنجازات
+            checkAchievements(gameState.players[gameState.currentPlayerIndex]);
+
+            // حدث اقتصادي عشوائي
+            triggerEconomicEvent();
+
+            // الحفظ التلقائي
+            checkAutoSave();
+
+            // عرض التحليلات
+            showFinancialAnalytics();
+        });
+
+        // === معالجة البطاقات ===
+        acceptCardBtn.addEventListener('click', function() {
+            const card = cardPopup.currentCard;
+            const player = gameState.players[gameState.currentPlayerIndex];
+            
+            if (card.type === "فرصة استثمارية") {
+                if (player.cash >= card.downPayment) {
+                    player.cash -= card.downPayment;
+                    player.cashFlow += card.cashFlow;
+                    
+                  if (card.cost > card.downPayment) {
+    const loanAmount = card.cost - card.downPayment;
+    
+    // حساب القسط الشهري الصحيح مع الفائدة
+    const monthlyInterestRate = card.loan.interestRate / 100 / 12;
+    const numberOfPayments = card.loan.termYears * 12;
+    
+    const monthlyPayment = Math.round(
+        (loanAmount * monthlyInterestRate) / 
+        (1 - Math.pow(1 + monthlyInterestRate, -numberOfPayments))
+    );
+    
+    player.liabilities.push({
+        name: "قرض " + card.title,
+        amount: loanAmount,
+        monthly: monthlyPayment,
+        interestRate: card.loan.interestRate,
+        remainingTerm: numberOfPayments
+    });
+    
+    player.cashFlow -= monthlyPayment;
+    
+    // إضافة تفاصيل القرض للسجل
+    addToLog(`📝 تم الحصول على قرض بقيمة ${loanAmount.toLocaleString()} ريال`);
+    addToLog(`💰 القسط الشهري: ${monthlyPayment} ريال (فائدة ${card.loan.interestRate}% سنوياً)`);
+}
+                    
+                    player.assets.push({
+                        name: card.title,
+                        value: card.cost,
+                        cashFlow: card.cashFlow
+                    });
+                    
+                    addToLog(`${player.name} استثمر في ${card.title}`);
+                } else {
+                    addToLog(`${player.name} لا يملك ما يكفي للاستثمار في ${card.title}`);
+                }
+            } else if (card.type === "دورة الحياة") {
+                if (card.effect === "bonus" || card.effect === "gift") {
+                    player.cash += card.amount;
+                    addToLog(`${player.name} حصل على ${card.amount} ريال`);
+                } else if (card.effect.includes("expense") || card.effect === "tax" || card.effect === "car_accident" || card.effect === "family_event" || card.effect === "travel_expense") {
+                    if (player.cash >= card.amount) {
+                        player.cash -= card.amount;
+                        addToLog(`${player.name} دفع ${card.amount} ريال ${card.effect === "tax" ? "كضريبة" : "كمصروف"}`);
+                    } else {
+                        addToLog(`${player.name} لا يملك ما يكفي لدفع ${card.amount} ريال!`);
+                        handleBankruptcy(player);
+                    }
+                } else if (card.effect === "income_loss") {
+                    player.salary -= card.amount;
+                    player.cashFlow = player.salary - player.expenses;
+                    addToLog(`${player.name} خسر ${card.amount} ريال من راتبه لمدة ${card.duration} أشهر`);
+                }
+            } else if (card.type === "سوق") {
+                if (card.effect === "property_value_up") {
+                    player.assets.forEach(asset => {
+                        if (asset.name.includes("عقار")) {
+                            asset.value = Math.round(asset.value * 1.2);
+                        }
+                    });
+                    addToLog(`📈 ${player.name} ارتفعت قيمة عقاراته بنسبة 20%`);
+                } else if (card.effect === "property_value_down") {
+                    player.assets.forEach(asset => {
+                        if (asset.name.includes("عقار")) {
+                            asset.value = Math.round(asset.value * 0.85);
+                        }
+                    });
+                    addToLog(`📉 ${player.name} انخفضت قيمة عقاراته بنسبة 15%`);
+                } else if (card.effect === "recession") {
+                    player.assets.forEach(asset => {
+                        asset.value = Math.round(asset.value * 0.9);
+                    });
+                    addToLog(`📉 ${player.name} تأثرت استثماراته بالكساد الاقتصادي`);
+                }
+            } else if (card.type === "المسار السريع") {
+                if (player.cash >= card.cost) {
+                    player.cash -= card.cost;
+                    player.cash += card.return;
+                    addToLog(`🚀 ${player.name} استثمر في ${card.title} وحقق عائد ${card.return.toLocaleString()} ريال!`);
+                    
+                    if (card.title === "تحقيق الهدف الحلم") {
+                        addToLog(`🎉 ${player.name} فاز باللعبة! تحقيق الحرية المالية الكاملة!`);
+                    }
+                } else {
+                    addToLog(`${player.name} لا يملك ما يكفي للاستثمار في ${card.title}`);
+                }
+            }
+            
+            hideCard();
+            renderCurrentPlayerStatement();
+            renderPlayers();
+            updateControls();
+        });
+
+        rejectCardBtn.addEventListener('click', function() {
+            const card = cardPopup.currentCard;
+            addToLog(`${gameState.players[gameState.currentPlayerIndex].name} رفض ${card.title}`);
+            hideCard();
+        });
+
+        function hideCard() {
+            cardPopup.style.display = 'none';
+            overlay.style.display = 'none';
+            cardPopup.currentCard = null;
+        }
+
+        // === نظام اللعبة الجديدة ===
+        newGameBtn.addEventListener('click', function() {
+            if (confirm("هل تريد بدء لعبة جديدة؟ سيتم فقدان التقدم الحالي.")) {
+                initGame();
+            }
+        });
+
+        // === الميزات الإضافية الأساسية ===
+        loadGameBtn.addEventListener('click', function() {
+            const saved = localStorage.getItem('cashFlowGame_save');
+            if (saved) {
+                if (confirm("هل تريد تحميل اللعبة السابقة؟")) {
+                    const gameData = JSON.parse(saved);
+                    gameState.players = gameData.players;
+                    gameState.currentPlayerIndex = gameData.currentPlayerIndex;
+                    gameState.properties = gameData.properties;
+                    gameState.gameStarted = gameData.gameStarted;
+                    gameState.diceRolled = gameData.diceRolled;
+                    gameState.fastTrackPlayers = gameData.fastTrackPlayers;
+                    
+                    setupScreen.style.display = 'none';
+                    renderPlayers();
+                    renderCurrentPlayerStatement();
+                    updateControls();
+                    addToLog("🔄 تم تحميل اللعبة السابقة");
+                }
+            } else {
+                alert("لا توجد لعبة محفوظة!");
+            }
+        });
+
+        saveGameBtn.addEventListener('click', function() {
+            const gameData = {
+                players: gameState.players,
+                currentPlayerIndex: gameState.currentPlayerIndex,
+                properties: gameState.properties,
+                gameStarted: gameState.gameStarted,
+                diceRolled: gameState.diceRolled,
+                fastTrackPlayers: gameState.fastTrackPlayers
+            };
+            
+            localStorage.setItem('cashFlowGame_save', JSON.stringify(gameData));
+            addToLog("💾 تم حفظ اللعبة بنجاح");
+        });
+
+     // === نظام الإنجازات ===
+        function checkAchievements(player) {
+            achievements.forEach(achievement => {
+                if (!unlockedAchievements.includes(achievement.id) && achievement.condition(player)) {
+                    unlockAchievement(achievement, player);
+                }
+            });
+        }
+
+        function unlockAchievement(achievement, player) {
+            unlockedAchievements.push(achievement.id);
+            player.cash += achievement.reward;
+            
+            addToLog(`🎉 ${player.name} فتح الإنجاز: ${achievement.name} +${achievement.reward} ريال!`);
+            
+            showAchievementPopup(achievement);
+        }
+
+        function showAchievementPopup(achievement) {
+            const popup = document.createElement('div');
+            popup.className = 'achievement-popup';
+            popup.innerHTML = `
+                <div class="achievement-content">
+                    <div class="achievement-icon">${achievement.icon}</div>
+                    <h3>إنجاز جديد!</h3>
+                    <div class="achievement-name">${achievement.name}</div>
+                    <div class="achievement-desc">${achievement.description}</div>
+                    <div class="achievement-reward">+${achievement.reward} ريال</div>
+                </div>
+            `;
+            
+            document.body.appendChild(popup);
+            
+            setTimeout(() => {
+                popup.remove();
+            }, 4000);
+        }
+
+        // === نظام الحفظ والتحميل ===
+        function saveGame() {
+            const gameData = {
+                players: gameState.players,
+                currentPlayerIndex: gameState.currentPlayerIndex,
+                properties: gameState.properties,
+                gameStarted: gameState.gameStarted,
+                diceRolled: gameState.diceRolled,
+                fastTrackPlayers: gameState.fastTrackPlayers,
+                unlockedAchievements: unlockedAchievements,
+                turn: calculateGameTurn()
+            };
+            
+            try {
+                localStorage.setItem('cashFlowGame_save', JSON.stringify(gameData));
+                addToLog("💾 تم حفظ التقدم بنجاح");
+            } catch (e) {
+                console.error("خطأ في الحفظ:", e);
+                addToLog("❌ فشل في حفظ اللعبة");
+            }
+        }
+
+        function loadGame() {
+            try {
+                const saved = localStorage.getItem('cashFlowGame_save');
+                if (saved) {
+                    const gameData = JSON.parse(saved);
+                    
+                    if (confirm("هل تريد استئناف اللعبة السابقة؟")) {
+                        gameState.players = gameData.players;
+                        gameState.currentPlayerIndex = gameData.currentPlayerIndex;
+                        gameState.properties = gameData.properties;
+                        gameState.gameStarted = gameData.gameStarted;
+                        gameState.diceRolled = gameData.diceRolled;
+                        gameState.fastTrackPlayers = gameData.fastTrackPlayers;
+                        unlockedAchievements = gameData.unlockedAchievements || [];
+                        
+                        setupScreen.style.display = 'none';
+                        renderPlayers();
+                        renderCurrentPlayerStatement();
+                        updateControls();
+                        addToLog("🔄 تم تحميل اللعبة السابقة");
+                    }
+                } else {
+                    alert("لا توجد لعبة محفوظة!");
+                }
+            } catch (e) {
+                console.error("خطأ في التحميل:", e);
+                alert("حدث خطأ في تحميل اللعبة المحفوظة");
+            }
+        }
+
+        function calculateGameTurn() {
+            return gameState.players.reduce((total, player) => total + (player.passedStart ? 1 : 0), 0);
+        }
+
+        let autoSaveCounter = 0;
+        function checkAutoSave() {
+            autoSaveCounter++;
+            if (autoSaveCounter >= 3) {
+                saveGame();
+                autoSaveCounter = 0;
+            }
+        }
+
+        // === الأحداث الاقتصادية ===
+        function triggerEconomicEvent() {
+            if (Math.random() < 0.25) { // 25% فرصة لحدوث حدث
+                const event = economicEvents[Math.floor(Math.random() * economicEvents.length)];
+                const result = event.action(gameState.players);
+                
+                addToLog(`🌍 حدث اقتصادي: ${event.title}`);
+                addToLog(`📝 ${event.description}`);
+                addToLog(`📊 ${result}`);
+                
+                renderCurrentPlayerStatement();
+                renderPlayers();
+            }
+        }
+
+        // === التحليلات المالية ===
+        function generateFinancialReport(player) {
+            const totalAssets = player.assets.reduce((sum, a) => sum + a.value, 0);
+            const totalLiabilities = player.liabilities.reduce((sum, l) => sum + l.amount, 0);
+            const netWorth = player.cash + totalAssets - totalLiabilities;
+            
+            return {
+                netWorth: netWorth,
+                debtRatio: totalAssets > 0 ? (totalLiabilities / totalAssets) : 0,
+                investmentDiversity: calculateDiversity(player.assets),
+                financialHealth: calculateHealthScore(player),
+                passiveIncomeRatio: player.salary > 0 ? (player.assets.reduce((sum, a) => sum + a.cashFlow, 0) / player.salary) : 0
+            };
+        }
+
+        function calculateDiversity(assets) {
+            if (assets.length === 0) return 0;
+            
+            const types = {};
+            assets.forEach(asset => {
+                const type = getAssetType(asset.name);
+                types[type] = (types[type] || 0) + 1;
+            });
+            
+            return Object.keys(types).length / assets.length;
+        }
+
+        function getAssetType(assetName) {
+            if (assetName.includes("عقار")) return "real_estate";
+            if (assetName.includes("أسهم")) return "stocks";
+            if (assetName.includes("مشروع")) return "business";
+            return "other";
+        }
+
+        function calculateHealthScore(player) {
+            let score = 0;
+            
+            if (player.cashFlow > 0) score += 30;
+            
+            const totalAssets = player.assets.reduce((sum, a) => sum + a.value, 0);
+            const debtRatio = totalAssets > 0 ? (player.liabilities.reduce((sum, l) => sum + l.amount, 0) / totalAssets) : 0;
+            if (debtRatio < 0.3) score += 30;
+            
+            score += calculateDiversity(player.assets) * 20;
+            
+            if (player.cash > 10000) score += 20;
+            
+            return Math.min(100, score);
+        }
+
+        function showFinancialAnalytics() {
+            const player = gameState.players[gameState.currentPlayerIndex];
+            const report = generateFinancialReport(player);
+            
+            const analyticsHTML = `
+                <div class="analytics-panel">
+                    <h4>📊 التحليلات المالية</h4>
+                    <div class="analytics-grid">
+                        <div class="analytics-item">
+                            <span>صافي الثروة:</span>
+                            <span>${report.netWorth.toLocaleString()} ريال</span>
+                        </div>
+                        <div class="analytics-item">
+                            <span>نسبة الدين:</span>
+                            <span>${(report.debtRatio * 100).toFixed(1)}%</span>
+                        </div>
+                        <div class="analytics-item">
+                            <span>تنوع الاستثمارات:</span>
+                            <span>${(report.investmentDiversity * 100).toFixed(0)}%</span>
+                        </div>
+                        <div class="analytics-item">
+                            <span>الصحة المالية:</span>
+                            <span>${report.financialHealth.toFixed(0)}/100</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            const existingAnalytics = document.querySelector('.analytics-panel');
+            if (existingAnalytics) {
+                existingAnalytics.remove();
+            }
+            
+            currentPlayerStatement.insertAdjacentHTML('beforeend', analyticsHTML);
+        }
+
+      
+        // بدء اللعبة عند تحميل الصفحة
+        window.onload = initGame;
+    </script>
+</body>
+</html>
